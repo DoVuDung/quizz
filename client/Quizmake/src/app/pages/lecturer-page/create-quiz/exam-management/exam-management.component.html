@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="row" cdkDropListGroup>
+    <div class="col">
+      <div class="example-container">
+        <h2>Danh sách câu hỏi trắc nghiệm</h2>
+
+        <div
+          cdkDropList
+          [cdkDropListData]="quizList"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <div class="example-box" *ngFor="let quiz of quizList" cdkDrag>
+            {{ quiz.question }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="example-container">
+        <h2>Danh sách câu hỏi kiểm tra</h2>
+        <div
+          cdkDropList
+          [cdkDropListData]="examList"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <div class="example-box" *ngFor="let exam of examList" cdkDrag>
+            {{ exam.question }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

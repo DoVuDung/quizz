@@ -1,0 +1,227 @@
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer
+    #drawer
+    class="example-sidenav"
+    mode="side"
+  >
+    <button
+      style="position: absolute; top: 1rem; right: 1rem;"
+      mat-icon-button
+      aria-label="Close"
+      (click)="drawer.toggle()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+    <h2>Thêm câu hỏi trắc nghiệm</h2>
+    <div>
+      <div
+        class="dropzone"
+        dropzone
+        (hovered)="toggleHover($event)"
+        (dropped)="onDrop($event)"
+        [class.hovering]="isHovering"
+      >
+        <h3>AngularFire Drop Zone</h3>
+        <p>Drag and Drop a File</p>
+        <div class="file">
+          <label class="file-label">
+            <input
+              class="file-input"
+              type="file"
+              (change)="onDrop($event.target.files)"
+            />
+
+            <span class="file-cta">
+              <span class="file-icon">
+                <i class="fa fa-upload"></i>
+              </span>
+              <span class="file-label">
+                or choose a file…
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <h3>Uploads</h3>
+      <button
+        class="w-100"
+        mat-raised-button
+        color="accent"
+        (click)="updateForm()"
+      >
+        Cập nhật
+      </button>
+      <div *ngFor="let file of files">
+        <app-upload-task
+          (fileURL)="getQuizData($event)"
+          [file]="file"
+        ></app-upload-task>
+      </div>
+    </div>
+    <hr />
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Nhập câu hỏi</mat-label>
+        <textarea
+          matInput
+          type="text"
+          name="question-input"
+          [(ngModel)]="question"
+        ></textarea>
+        <button
+          mat-button
+          *ngIf="question"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="question = ''"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-radio-group aria-label="Select an option">
+        <div *ngFor="let a of answerList; let index = index">
+          <div class="row">
+            <div class="col-1" style="padding-top: 1rem;">
+              <mat-radio-button value="{{ index }}"></mat-radio-button>
+            </div>
+            <div class="col-10">
+              <mat-form-field class="example-full-width">
+                <mat-label>Câu trả lời {{ index + 1 }}</mat-label>
+                <input
+                  matInput
+                  name="answer_{{ index }}"
+                  [(value)]="answerList[index]"
+                  type="text"
+                />
+              </mat-form-field>
+            </div>
+            <div class="col-1">
+              <button
+                mat-icon-button
+                color="warn"
+                style="outline: none;"
+                (click)="removeAnswerBox(index)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+      <div class="text-center">
+        <button
+          mat-mini-fab
+          color="accent"
+          aria-label="a add icon"
+          (click)="addAnswerBox()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <hr />
+      <button class="w-100" mat-raised-button color="primary">
+        Thêm
+      </button>
+      <hr />
+      <button class="w-100" mat-raised-button color="accent">
+        Lưu
+      </button>
+      <hr />
+    </form>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div
+            style="
+              position: fixed;
+              top: 50%;
+              left: 5%;
+              transform: translate(-50%, -50%);
+            "
+          >
+            <button
+              (click)="drawer.toggle()"
+              mat-mini-fab
+              color="primary"
+              aria-label="Example icon button with a menu icon"
+            >
+              <mat-icon>keyboard_arrow_right</mat-icon>
+            </button>
+          </div>
+          <h2>Danh sách Câu hỏi trắc nghiệm</h2>
+          <div
+            cdkDropList
+            class="example-list"
+            (cdkDropListDropped)="drop($event)"
+          >
+            <div
+              class="example-box"
+              *ngFor="let quiz of quizList; let i = index"
+              cdkDrag
+            >
+              <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+              <form class="example-form">
+                <h2>Câu {{ i + 1 }}:</h2>
+                <mat-form-field class="example-full-width">
+                  <mat-label>Nhập câu hỏi</mat-label>
+                  <textarea
+                    matInput
+                    type="text"
+                    name="question-input"
+                    [(ngModel)]="quiz.question"
+                  ></textarea>
+                  <button
+                    mat-button
+                    *ngIf="quiz.question"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="quiz.question = ''"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+
+                <mat-radio-group [(ngModel)]="quiz.correct" aria-label="Select an option">
+                  <mat-grid-list cols="2" rowHeight="6:1">
+                    <mat-grid-tile
+                      *ngFor="let a of quiz.answers; let index = index"
+                    >
+                      <mat-radio-button value="{{ index }}" [checked]="index == quiz.correct"></mat-radio-button>
+                      <mat-form-field class="example-full-width">
+                        <mat-label>Câu trả lời {{ index + 1 }}</mat-label>
+                        <input
+                          matInput
+                          name="answer_{{ index }}"
+                          [(ngModel)]="quiz.answers[index]"
+                          type="text"
+                        />
+                      </mat-form-field>
+                      <!-- </div> -->
+                      <!-- </div> -->
+                    </mat-grid-tile>
+                  </mat-grid-list>
+                </mat-radio-group>
+                <div class="text-center">
+                  <button
+                    mat-mini-fab
+                    color="warn"
+                    aria-label="a add icon"
+                    (click)="removeQuizBox(i)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-drawer-container>
